@@ -3029,30 +3029,6 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
 .lang-content[dir="rtl"] .copy-all-btn:last-child { border-left:none; }
 
 
-/* Plain-English explainer boxes (grandma/kid style — instant understanding) */
-.plain-box {
-  background:#F0F9FF;
-  border:2px solid #BAE6FD;
-  border-left:5px solid #0EA5E9;
-  border-radius:10px;
-  padding:20px 24px;
-  margin:0 0 26px 0;
-}
-.plain-box-title {
-  font-size:16px; font-weight:800; color:#0C4A6E;
-  margin-bottom:12px; display:flex; align-items:center; gap:8px;
-}
-.plain-box p { font-size:14px; line-height:1.7; color:#1E293B; margin:0 0 10px 0; }
-.plain-box p:last-child { margin-bottom:0; }
-.plain-box strong { color:#0C4A6E; }
-.plain-box .pb-q { font-weight:700; color:#0369A1; }
-.plain-note {
-  background:#F0F9FF; border-left:4px solid #0EA5E9; border-radius:6px;
-  padding:13px 15px; margin:14px 0; font-size:13px; line-height:1.65; color:#1E293B;
-}
-.plain-note strong { color:#0C4A6E; }
-.plain-note-label { font-weight:700; color:#0369A1; display:block; margin-bottom:5px; }
-
 </style>
 </head>
 <body>
@@ -3090,18 +3066,6 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
 
 <!-- ============ MAIN (sections will be added below) ============ -->
 <div class="main">
-
-<div class="plain-box">
-  <div class="plain-box-title">💡 In Plain English — Start Here</div>
-  <p>Here's the whole thing in simple terms:</p>
-  <p><span class="pb-q">What is this?</span> A series of <strong>5 emails</strong> that gently introduce our existing customers to the <strong>IB (Introducing Broker) program</strong> — a way for them to earn rebates by introducing friends to TMGM.</p>
-  <p><span class="pb-q">Who gets the emails?</span> Any customer who passes a simple <strong>8-point checklist</strong>: they've verified their ID, made their first deposit, are NOT already an IB, are NOT already being looked after by the sales team or another partner team, and live in an allowed country.</p>
-  <p><span class="pb-q">When do the emails start?</span> We <strong>wait 7 days after the customer's first deposit</strong>, then send Email 1. (Important: we wait 7 days after EVERY qualifying customer's deposit — not only people who deposited recently.)</p>
-  <p><span class="pb-q">How are the 5 emails spaced out?</span> They go out over about <strong>5 weeks</strong>, with rest days in between, so nobody feels flooded.</p>
-  <p><span class="pb-q">What if they become an IB?</span> The moment they do, we <strong>stop emailing them</strong> — they've converted, so the job is done.</p>
-  <p><span class="pb-q">What if they don't?</span> We <strong>wait 30 days, then send all 5 emails again</strong> from the start. We keep repeating this until they become an IB or opt out.</p>
-  <p><span class="pb-q">What happens on day one, when we first switch it on?</span> It will also email existing customers who already qualify — not just brand-new ones. To avoid sending too many emails at once, we'll only include customers who made their <strong>first deposit in the last 12 months</strong>.</p>
-</div>
 
 <!-- ============ SECTION 1 — QUICK REFERENCE ============ -->
 <div class="section-title">Section 1 — Quick Reference</div>
@@ -4140,11 +4104,6 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
               </div>
             </div>
 
-            <div class="plain-note">
-              <span class="plain-note-label">💡 In plain English</span>
-              After a customer makes their first deposit, we <strong>wait 7 days, then start emailing</strong>. We do NOT only email people who deposited in the last 7 days — we wait 7 days after <strong>everyone's</strong> first deposit, even if it happened a year ago. Think of it as: deposit happens → count 7 days → Email 1 goes out. The easiest way to build this is a <strong>7-day delay step</strong> right after the customer joins, before Email 1.
-            </div>
-
             <div class="filter-twocol">
               <div class="filter-block">
                 <div class="filter-section-label">🔧 Technical Spec</div>
@@ -4886,9 +4845,9 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         <strong>For Sichen.</strong> The HubSpot Workflow engine reference — every <strong>activity type</strong> the journey uses, the recommended <strong>send window</strong>, the <strong>HubL</strong> for personalization, and the <strong>continuous exit logic</strong> for clients who become IBs mid-journey.
       </div>
 
-      <div class="plain-note" style="margin-bottom:18px;">
-        <span class="plain-note-label">🚀 What happens on day one (when we first switch it on)</span>
-        The day we turn this on, it will email <strong>existing customers who already qualify</strong> — not just new ones from that day forward. To avoid sending a huge batch of emails on day one, we'll only include customers who made their <strong>first deposit in the last 12 months</strong>. After that, it runs on its own, adding each customer 7 days after their first deposit.
+      <div class="filter-note" style="margin-bottom:18px;">
+        <div class="filter-section-label">First Activation (Launch Behaviour)</div>
+        <div class="filter-note-text">When the workflow is first switched on, it enrolls existing eligible clients as well as new ones — not only clients who FTD going forward. To keep the day-one send volume manageable, the initial backfill is <strong>capped to clients who completed their FTD within the last 12 months</strong>. After launch, the workflow runs continuously, enrolling each client once they clear the 7-day buffer.</div>
       </div>
 
       <!-- HubSpot Activities Used -->
@@ -5338,11 +5297,6 @@ Hi {% <span class="ampscript-keyword">if</span> <span class="ampscript-var">cont
       <!-- Intro -->
       <div class="s4-intro">
         <strong>How non-converting contacts return to the workflow.</strong> Section 7 covered the four exit pathways at a high level. This section is the <strong>deep dive on re-entry mechanics</strong> — the HubSpot configuration, the 30-day cool-down, the monthly re-blast cadence, and edge case behaviors.
-      </div>
-
-      <div class="plain-note">
-        <span class="plain-note-label">💡 In plain English</span>
-        After a customer gets all 5 emails, if they <strong>still haven't become an IB</strong>, we wait <strong>30 days</strong> and then send the 5 emails again from the start. We keep repeating this until they become an IB or opt out. No need to worry about double-emailing — HubSpot will never send someone two copies at once. If they're still partway through the emails or in the 30-day wait, it won't start them again.
       </div>
 
       <!-- The Re-Entry Pattern (Visual Timeline) -->
