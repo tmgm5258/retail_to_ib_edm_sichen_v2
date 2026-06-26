@@ -3109,7 +3109,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
       <div class="qr-stat theme-green">
         <div class="qr-stat-tooltip">
           <strong>7-Day Drip Journey</strong><br>
-          Total journey duration: Day 0 (E1 immediate) → Day 7 (E5). Includes 5 email sends + 3 rest day waits. Send timing configured per HubSpot Send email action.
+          After enrolment, a 7-day delay runs first; then the 5-email sequence runs Day 0 (E1) → Day 7 (E5). Includes 5 email sends + 3 rest day waits. Send timing configured per HubSpot Send email and Delay actions.
           <span class="qr-stat-tooltip-ref">→ See Section 6 (Triggering Logic)</span>
         </div>
         <span class="qr-stat-icon">📅</span>
@@ -3129,7 +3129,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
       <div class="qr-stat theme-purple">
         <div class="qr-stat-tooltip">
           <strong>8 Filter Conditions</strong><br>
-          All 8 must be true for a client to enter the journey: KYC verified, FTD completed, 7-day buffer met, not existing IB, not IB-referred, not Sales-acquired, not Partnership, and valid country.
+          All 8 must be true for a client to enter the journey: KYC verified, FTD completed, not existing IB, not IB-referred, not Sales-acquired, not Partnership, not affiliate-referred, and valid country.
           <span class="qr-stat-tooltip-ref">→ See Section 4 (Filter Logic — full HubSpot syntax)</span>
         </div>
         <span class="qr-stat-icon">🚦</span>
@@ -3139,7 +3139,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
       <div class="qr-stat theme-teal">
         <div class="qr-stat-tooltip">
           <strong>30-Day Cool-Down Loop</strong><br>
-          After E5, non-converted clients enter a 30-day wait. After that, filter conditions are re-evaluated — if still eligible AND <code>portal - user_type</code> not <code>"IB"</code> / <code>"IB + Client"</code>, client re-enters from E1. Indefinite monthly loop.
+          After E5, non-converted clients enter a 30-day wait. After that, filter conditions are re-evaluated — if still eligible AND <code>portal - user_type</code> not <code>"IB"</code> / <code>"IB + Client"</code>, client re-enters from E1. Capped at 3 rounds (max ~15 emails per contact).
           <span class="qr-stat-tooltip-ref">→ See Section 8 (Re-Entry Rules)</span>
         </div>
         <span class="qr-stat-icon">🔄</span>
@@ -3175,7 +3175,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
       </div>
       <div class="qr-meta-row">
         <div class="qr-meta-label">Excluded Markets</div>
-        <div class="qr-meta-value">China · Hong Kong · UK · ASIC regions</div>
+        <div class="qr-meta-value">Greater China (CN · HK · Macau · TW) · UK · ASIC (AU · NZ) · Singapore · Japan · Canada · France · Spain · Romania</div>
       </div>
     </div>
   </div>
@@ -3259,12 +3259,6 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         </div>
         <div class="qf-vline"></div>
 
-        <div class="qf-box qf-buffer">
-          <div class="qf-tooltip tip-below"><strong>7-day wait period after FTD.</strong> Gives the KYC-FTD onboarding journey time to finish and lets the contact actually trade before we pitch the IB program.</div>
-          <div class="qf-box-title">🕐 7-Day Buffer Period</div>
-          <div class="qf-box-sub"><code style="font-family:var(--font-mono);font-size:10px;">ta_first_deposit_time is more than 7 days ago</code></div>
-        </div>
-        <div class="qf-vline"></div>
 
         <div class="qf-box qf-upstream">
           <div class="qf-tooltip tip-below">HubSpot continuously re-evaluates every contact against the Phase 1.0 Active List criteria. The moment a contact matches all 8 filter conditions, they automatically enroll in the workflow.</div>
@@ -3282,9 +3276,17 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         </div>
         <div class="qf-vline"></div>
 
+        <!-- ===== 7-DAY DELAY ===== -->
+        <div class="qf-box qf-buffer">
+          <div class="qf-tooltip tip-below"><strong>7-day delay before the first email.</strong> Gives the KYC-FTD onboarding journey time to finish and lets the contact actually trade before we pitch the IB program. Built as a Delay action — the first step of the workflow.</div>
+          <div class="qf-box-title">⏳ 7-Day Delay</div>
+          <div class="qf-box-sub">Delay action · wait 7 days, then Email 1</div>
+        </div>
+        <div class="qf-vline"></div>
+
         <!-- ===== E1 ===== -->
         <div class="qf-box qf-email">
-          <div class="qf-tooltip tip-below"><strong>Stage 1 · Awareness.</strong> First email, sent immediately on enrollment. Introduces the IB Program — what it is and how it works.</div>
+          <div class="qf-tooltip tip-below"><strong>Stage 1 · Awareness.</strong> First email, sent after the 7-day delay. Introduces the IB Program — what it is and how it works.</div>
           <div class="qf-box-title">E1 — IB Program Explained</div>
           <div class="qf-box-sub">Day 0 · Curiosity</div>
         </div>
@@ -3520,7 +3522,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
       <a href="#detail-e1" class="j-node email has-arrow-right" onclick="showNodeDetail(event, this)">
         <div class="j-tooltip tip-bottom">
           <strong>Email 1 · Day 0</strong><br>
-          Sent immediately on journey entry (no wait).<br>
+          Sent after the 7-day delay (the workflow's first step).<br>
           Trigger: <code>Entry → Send</code><br>
           <em style="color:#A7F3D0;">Click to view full template &amp; HubSpot setup</em>
         </div>
@@ -3634,7 +3636,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
     </div>
     <div class="j-cooldown-loop">
       <span class="j-cooldown-loop-icon">↺</span>
-      <span><strong>Then:</strong> if still eligible AND <code>portal - user_type</code> not <code>"IB"</code> / <code>"IB + Client"</code> → re-enter journey from E1 (indefinite monthly loop).</span>
+      <span><strong>Then:</strong> if still eligible AND <code>portal - user_type</code> not <code>"IB"</code> / <code>"IB + Client"</code> → re-enter journey from E1 (capped at 3 rounds).</span>
     </div>
   </a>
 
@@ -3653,7 +3655,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
 
       <div class="nd-field"><div class="nd-field-label"><span class="nd-field-label-icon">📌</span>Goal</div><div class="nd-field-value">Introduce the TMGM IB Program in plain language. Goal is <strong>education and curiosity</strong>, not conversion at this stage.</div></div>
       <div class="nd-field"><div class="nd-field-label"><span class="nd-field-label-icon">👥</span>WHO · Sent To</div><div class="nd-field-value">Retail clients who have completed <strong>KYC + made FTD at least 7 days ago</strong>, are not already IBs, are not IB/Sales/Partnership-tagged, and are in eligible markets (see Section 4 for full filter).</div></div>
-      <div class="nd-field"><div class="nd-field-label"><span class="nd-field-label-icon">⏰</span>WHEN · Send Timing</div><div class="nd-field-value"><strong>Day 0</strong> — sent immediately when the client matches the entry filter.</div></div>
+      <div class="nd-field"><div class="nd-field-label"><span class="nd-field-label-icon">⏰</span>WHEN · Send Timing</div><div class="nd-field-value"><strong>Day 0 of the email sequence</strong> — sent after the 7-day delay that follows enrolment.</div></div>
       <div class="nd-field"><div class="nd-field-label"><span class="nd-field-label-icon">📧</span>WHAT · Subject Line</div><div class="nd-field-value"><strong>The TMGM IB Program — explained in 60 seconds</strong></div></div>
       <div class="nd-field"><div class="nd-field-label"><span class="nd-field-label-icon">📨</span>Preview Text</div><div class="nd-field-value">A quick look at how the program works</div></div>
       <div class="nd-field"><div class="nd-field-label"><span class="nd-field-label-icon">🚪</span>Exit Condition</div><div class="nd-field-value">Client converts to IB (<code>portal - user_type</code> = <code>"IB"</code> or <code>"IB + Client"</code>) → exits journey, routed to Newly IB welcome (<code>MKTOP-7576</code>).</div></div>
@@ -3664,7 +3666,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         <div class="nd-tech-grid">
           <div class="nd-tech-field"><div class="nd-tech-label">📊 Data Source</div><div class="nd-tech-value"><code>HubSpot Contacts</code> · synced from CRM every 4 hours (confirmed)</div></div>
           <div class="nd-tech-field"><div class="nd-tech-label">🔄 Trigger Source</div><div class="nd-tech-value">Automated filter — Section 4 entry criteria match</div></div>
-          <div class="nd-tech-field"><div class="nd-tech-label">⏱ Wait Time</div><div class="nd-tech-value">None — sends immediately on filter match</div></div>
+          <div class="nd-tech-field"><div class="nd-tech-label">⏱ Wait Time</div><div class="nd-tech-value">7-day delay runs before E1 (workflow's first step)</div></div>
           <div class="nd-tech-field"><div class="nd-tech-label">✓ Pre-Send Check</div><div class="nd-tech-value">N/A (first email)</div></div>
           <div class="nd-tech-field"><div class="nd-tech-label">🗂 Data Fields Checked</div><div class="nd-tech-value"><code>portal - client_status</code> <code>portal - user_type</code> <code>source_marketing_campaign</code> <code>portal - country</code> <code>ta_first_deposit_time</code></div></div>
           <div class="nd-tech-field"><div class="nd-tech-label">🚪 Exit Trigger</div><div class="nd-tech-value"><code>portal - user_type</code> becomes <code>"IB"</code> or <code>"IB + Client"</code> → route to <code>MKTOP-7576</code></div></div>
@@ -4074,85 +4076,11 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         </div>
       </div>
 
-      <!-- FILTER 3: 7-DAY BUFFER -->
+      <!-- FILTER 3: NOT EXISTING IB -->
       <div id="filter-3" class="filter-card">
         <div class="filter-header" onclick="toggleFilterCard(this)">
           <div class="filter-header-left">
             <div class="filter-number">3</div>
-            <div class="filter-meta">
-              <div class="filter-title">7-Day Buffer Since FTD</div>
-              <div class="filter-subtitle">At least 7 days must have passed since the First Time Deposit</div>
-            </div>
-          </div>
-          <div class="filter-header-right">
-            <span class="filter-status confirmed">Confirmed</span>
-            <span class="expand-hint">Expand</span>
-            <div class="filter-toggle">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="transition:transform 0.3s"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-          </div>
-        </div>
-        <div class="filter-collapsible">
-          <div class="filter-body">
-
-            <div class="filter-builder-block">
-              <div class="filter-section-label">🎛️ HubSpot Workflow enrollment filter — point &amp; click setup (no code)</div>
-              <div class="filter-builder">
-                <div class="fb-row"><div class="fb-key">Field</div><div class="fb-val"><code>ta_first_deposit_time</code></div></div>
-                <div class="fb-row"><div class="fb-key">Operator</div><div class="fb-val"><span class="fb-operator">is more than X days ago</span></div></div>
-                <div class="fb-row"><div class="fb-key">Value</div><div class="fb-val"><span class="fb-value-pill">more than 7 days ago</span> <span class="fb-na">(HubSpot rolling-date operator)</span></div></div>
-              </div>
-            </div>
-
-            <div class="filter-twocol">
-              <div class="filter-block">
-                <div class="filter-section-label">🔧 Technical Spec</div>
-                <div class="filter-spec-row"><span class="filter-spec-key">Field:</span><span class="filter-spec-val"><code>ta_first_deposit_time</code></span></div>
-                <div class="filter-spec-row"><span class="filter-spec-key">Source:</span><span class="filter-spec-val"><code>HubSpot Contacts</code></span></div>
-                <div class="filter-spec-row"><span class="filter-spec-key">Logic:</span><span class="filter-spec-val">Days since FTD ≥ 7</span></div>
-                <div class="filter-spec-row"><span class="filter-spec-key">Reference:</span><span class="filter-spec-val">HubSpot rolling-date (today, no formula needed)</span></div>
-              </div>
-
-              <div class="filter-block">
-                <div class="filter-section-label">📥 Allowed / ❌ Blocked Examples</div>
-                <div class="filter-values-group">
-                  <div class="filter-values-heading allowed">✅ Allowed (FTD ≥ 7 days ago)</div>
-                  <div class="filter-values-list">
-                    <span class="filter-value-pill allowed">7 days ago</span>
-                    <span class="filter-value-pill allowed">30 days ago</span>
-                    <span class="filter-value-pill allowed">1 year ago</span>
-                  </div>
-                </div>
-                <div class="filter-values-group">
-                  <div class="filter-values-heading blocked">❌ Blocked (FTD &lt; 7 days ago)</div>
-                  <div class="filter-values-list">
-                    <span class="filter-value-pill blocked">Today</span>
-                    <span class="filter-value-pill blocked">3 days ago</span>
-                    <span class="filter-value-pill blocked">6 days ago</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="filter-note">
-              <div class="filter-section-label">📋 NULL Handling</div>
-              <div class="filter-note-text">N/A — clients with NULL <code>ta_first_deposit_time</code> are already excluded by Filter 2.</div>
-            </div>
-
-            <div class="filter-note">
-              <div class="filter-section-label">🎯 Why This Filter Exists</div>
-              <div class="filter-note-text">Ensures the upstream <strong>KYC→FTD journey</strong> (max 9 days for ROW) has finished sending — prevents email overlap. Also gives clients time to settle in and trade before introducing the IB program.</div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- FILTER 4: NOT EXISTING IB -->
-      <div id="filter-4" class="filter-card">
-        <div class="filter-header" onclick="toggleFilterCard(this)">
-          <div class="filter-header-left">
-            <div class="filter-number">4</div>
             <div class="filter-meta">
               <div class="filter-title">Not an Existing IB</div>
               <div class="filter-subtitle">Client is not already enrolled in the IB program</div>
@@ -4230,11 +4158,11 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         </div>
       </div>
 
-      <!-- FILTER 5: NOT IB-REFERRED -->
-      <div id="filter-5" class="filter-card">
+      <!-- FILTER 4: NOT IB-REFERRED -->
+      <div id="filter-4" class="filter-card">
         <div class="filter-header" onclick="toggleFilterCard(this)">
           <div class="filter-header-left">
-            <div class="filter-number">5</div>
+            <div class="filter-number">4</div>
             <div class="filter-meta">
               <div class="filter-title">Not IB-Referred</div>
               <div class="filter-subtitle">Client was not referred to TMGM by an existing IB partner</div>
@@ -4304,11 +4232,11 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         </div>
       </div>
 
-      <!-- FILTER 6: NOT SALES-ACQUIRED -->
-      <div id="filter-6" class="filter-card">
+      <!-- FILTER 5: NOT SALES-ACQUIRED -->
+      <div id="filter-5" class="filter-card">
         <div class="filter-header" onclick="toggleFilterCard(this)">
           <div class="filter-header-left">
-            <div class="filter-number">6</div>
+            <div class="filter-number">5</div>
             <div class="filter-meta">
               <div class="filter-title">Not Sales-Acquired</div>
               <div class="filter-subtitle">Client is not in an active sales-managed relationship</div>
@@ -4365,7 +4293,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
 
             <div class="filter-note">
               <div class="filter-section-label">📋 NULL Handling</div>
-              <div class="filter-note-text"><strong>Allowed.</strong> Same logic as Filter 5.</div>
+              <div class="filter-note-text"><strong>Allowed.</strong> Same logic as Filter 4.</div>
             </div>
 
             <div class="filter-note">
@@ -4377,11 +4305,11 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
         </div>
       </div>
 
-      <!-- FILTER 7: NOT PARTNERSHIP -->
-      <div id="filter-7" class="filter-card">
+      <!-- FILTER 6: NOT PARTNERSHIP -->
+      <div id="filter-6" class="filter-card">
         <div class="filter-header" onclick="toggleFilterCard(this)">
           <div class="filter-header-left">
-            <div class="filter-number">7</div>
+            <div class="filter-number">6</div>
             <div class="filter-meta">
               <div class="filter-title">Not Partnership-Tagged</div>
               <div class="filter-subtitle">Client is not in an active partnership funnel</div>
@@ -4438,12 +4366,85 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
 
             <div class="filter-note">
               <div class="filter-section-label">📋 NULL Handling</div>
-              <div class="filter-note-text"><strong>Allowed.</strong> Same logic as Filters 5 and 6.</div>
+              <div class="filter-note-text"><strong>Allowed.</strong> Same logic as Filters 4 and 5.</div>
             </div>
 
             <div class="filter-note">
               <div class="filter-section-label">🎯 Why This Filter Exists</div>
               <div class="filter-note-text">Partnership-tagged clients are in active partner-nurture funnels run by other TMGM teams. Overlapping campaigns would create attribution confusion and message conflict.</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER 7: NOT AFFILIATE-REFERRED -->
+      <div id="filter-7" class="filter-card">
+        <div class="filter-header" onclick="toggleFilterCard(this)">
+          <div class="filter-header-left">
+            <div class="filter-number">7</div>
+            <div class="filter-meta">
+              <div class="filter-title">Not Affiliate-Referred</div>
+              <div class="filter-subtitle">Client was not referred to TMGM by an affiliate partner</div>
+            </div>
+          </div>
+          <div class="filter-header-right">
+            <span class="filter-status confirmed">Confirmed</span>
+            <span class="expand-hint">Expand</span>
+            <div class="filter-toggle">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="transition:transform 0.3s"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+        </div>
+        <div class="filter-collapsible">
+          <div class="filter-body">
+
+            <div class="filter-builder-block">
+              <div class="filter-section-label">🎛️ HubSpot Workflow enrollment filter — point &amp; click setup (no code)</div>
+              <div class="filter-builder">
+                <div class="fb-row"><div class="fb-key">Field</div><div class="fb-val"><code>source_marketing_campaign</code></div></div>
+                <div class="fb-row"><div class="fb-key">Operator</div><div class="fb-val"><span class="fb-operator">doesn't start with</span></div></div>
+                <div class="fb-row"><div class="fb-key">Value</div><div class="fb-val"><span class="fb-value-pill">aff-</span> <span class="fb-na">(NULL records pass through)</span></div></div>
+              </div>
+            </div>
+
+            <div class="filter-twocol">
+              <div class="filter-block">
+                <div class="filter-section-label">🔧 Technical Spec</div>
+                <div class="filter-spec-row"><span class="filter-spec-key">Field:</span><span class="filter-spec-val"><code>source_marketing_campaign</code></span></div>
+                <div class="filter-spec-row"><span class="filter-spec-key">Source:</span><span class="filter-spec-val"><code>HubSpot Contacts</code></span></div>
+                <div class="filter-spec-row"><span class="filter-spec-key">Data Type:</span><span class="filter-spec-val">String</span></div>
+                <div class="filter-spec-row"><span class="filter-spec-key">Operator:</span><span class="filter-spec-val"><code>doesn't start with aff-</code></span></div>
+              </div>
+
+              <div class="filter-block">
+                <div class="filter-section-label">📥 Allowed / ❌ Blocked Examples</div>
+                <div class="filter-values-group">
+                  <div class="filter-values-heading allowed">✅ Allowed</div>
+                  <div class="filter-values-list">
+                    <span class="filter-value-pill null-pill">NULL</span>
+                    <span class="filter-value-pill allowed">"Refer Friend"</span>
+                    <span class="filter-value-pill allowed">"MKT-Display-2026"</span>
+                  </div>
+                </div>
+                <div class="filter-values-group">
+                  <div class="filter-values-heading blocked">❌ Blocked</div>
+                  <div class="filter-values-list">
+                    <span class="filter-value-pill blocked">"aff-123456"</span>
+                    <span class="filter-value-pill blocked">"aff-*"</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="filter-note">
+              <div class="filter-section-label">📋 NULL Handling</div>
+              <div class="filter-note-text"><strong>Allowed.</strong> Same logic as Filters 4, 5, and 6.</div>
+            </div>
+
+            <div class="filter-note">
+              <div class="filter-section-label">🎯 Why This Filter Exists</div>
+              <div class="filter-note-text">Affiliate-referred clients (tagged <code>aff-</code>) already have an affiliate partner who owns that relationship. Recruiting them into the IB program would create <strong>channel conflict</strong> — the same reasoning as the IB-referred, Sales, and Partnership exclusions.</div>
             </div>
 
           </div>
@@ -4476,7 +4477,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
               <div class="filter-builder">
                 <div class="fb-row"><div class="fb-key">Field</div><div class="fb-val"><code>portal - country</code></div></div>
                 <div class="fb-row"><div class="fb-key">Operator</div><div class="fb-val"><span class="fb-operator">is not any of</span></div></div>
-                <div class="fb-row"><div class="fb-key">Value</div><div class="fb-val"><span class="fb-value-pill">China</span> <span class="fb-value-pill">Hong Kong</span> <span class="fb-value-pill">United Kingdom</span> <span class="fb-value-pill">Australia</span> <span class="fb-value-pill">New Zealand</span></div></div>
+                <div class="fb-row"><div class="fb-key">Value</div><div class="fb-val"><span class="fb-value-pill">China</span> <span class="fb-value-pill">Hong Kong</span> <span class="fb-value-pill">Macau</span> <span class="fb-value-pill">Taiwan</span> <span class="fb-value-pill">United Kingdom</span> <span class="fb-value-pill">Australia</span> <span class="fb-value-pill">New Zealand</span> <span class="fb-value-pill">Singapore</span> <span class="fb-value-pill">Japan</span> <span class="fb-value-pill">Canada</span> <span class="fb-value-pill">France</span> <span class="fb-value-pill">Spain</span> <span class="fb-value-pill">Romania</span></div></div>
               </div>
             </div>
 
@@ -4494,7 +4495,8 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
                 <div class="filter-values-group">
                   <div class="filter-values-heading allowed">✅ Allowed Markets</div>
                   <div class="filter-values-list">
-                    <span class="filter-value-pill allowed">SEA (Malaysia, Singapore, Thailand, Vietnam, Indonesia, Philippines, South Korea)</span>
+                    <span class="filter-value-pill allowed">SEA (Malaysia, Thailand, Vietnam, Indonesia, Philippines)</span>
+                    <span class="filter-value-pill allowed">North Asia (South Korea)</span>
                     <span class="filter-value-pill allowed">MENA (Saudi Arabia, UAE, Egypt, Kuwait, Qatar, Bahrain, Oman, Jordan, Lebanon)</span>
                     <span class="filter-value-pill allowed">English markets (excl. UK)</span>
                   </div>
@@ -4504,8 +4506,16 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
                   <div class="filter-values-list">
                     <span class="filter-value-pill blocked">China (Mainland)</span>
                     <span class="filter-value-pill blocked">Hong Kong</span>
+                    <span class="filter-value-pill blocked">Macau</span>
+                    <span class="filter-value-pill blocked">Taiwan</span>
                     <span class="filter-value-pill blocked">United Kingdom</span>
                     <span class="filter-value-pill blocked">Australia, New Zealand (ASIC regions)</span>
+                    <span class="filter-value-pill blocked">Singapore</span>
+                    <span class="filter-value-pill blocked">Japan</span>
+                    <span class="filter-value-pill blocked">Canada</span>
+                    <span class="filter-value-pill blocked">France</span>
+                    <span class="filter-value-pill blocked">Spain</span>
+                    <span class="filter-value-pill blocked">Romania</span>
                   </div>
                 </div>
               </div>
@@ -4520,9 +4530,10 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
               <div class="filter-section-label">🎯 Why This Filter Exists</div>
               <div class="filter-note-text">Each blocked jurisdiction has a specific reason:
               <ul style="margin-top:6px;padding-left:20px;">
-                <li><strong>China &amp; Hong Kong:</strong> Regulatory restrictions on offshore broker promotion</li>
+                <li><strong>China, Hong Kong, Macau &amp; Taiwan:</strong> Regulatory restrictions on offshore broker promotion across Greater China</li>
                 <li><strong>UK:</strong> FCA marketing restrictions for retail derivatives</li>
-                <li><strong>ASIC (AU/NZ):</strong> ASIC restrictions on IB-style structures</li>
+                <li><strong>ASIC (Australia &amp; New Zealand):</strong> ASIC restrictions on IB-style structures</li>
+                <li><strong>Singapore, Japan, Canada, France, Spain &amp; Romania:</strong> Per Legal direction — promotional content may not be distributed to these jurisdictions</li>
               </ul></div>
             </div>
 
@@ -4568,7 +4579,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
           <span class="s3-faq-toggle">⌄</span>
         </div>
         <div class="s3-faq-collapsible">
-          <div class="s3-faq-a"><strong>Allowed.</strong> NULL represents organic clients with no tracked acquisition channel (e.g. they Googled TMGM and signed up directly). They pass Filters 5, 6, and 7 because NULL doesn't match any of the blocked prefixes. HubSpot's <code>doesn't start with</code> / <code>doesn't contain</code> operators treat unknown values as passing the filter.</div>
+          <div class="s3-faq-a"><strong>Allowed.</strong> NULL represents organic clients with no tracked acquisition channel (e.g. they Googled TMGM and signed up directly). They pass Filters 4, 5, and 6 because NULL doesn't match any of the blocked prefixes. HubSpot's <code>doesn't start with</code> / <code>doesn't contain</code> operators treat unknown values as passing the filter.</div>
         </div>
       </div>
 
@@ -4578,7 +4589,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
           <span class="s3-faq-toggle">⌄</span>
         </div>
         <div class="s3-faq-collapsible">
-          <div class="s3-faq-a"><strong>TBD.</strong> Depends on whether <code>ta_first_deposit_time</code> resets on the new account or carries over. Confirm with Nick. If it resets, the 7-day buffer (Filter 3) re-applies correctly. If not, the client may immediately qualify — verify expected behaviour.</div>
+          <div class="s3-faq-a"><strong>TBD.</strong> Depends on whether <code>ta_first_deposit_time</code> resets on the new account or carries over. Confirm with Nick. Either way, the 7-day delay runs from when the contact enters the workflow, so they always get the 7-day wait before Email 1.</div>
         </div>
       </div>
 
@@ -4598,7 +4609,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
           <span class="s3-faq-toggle">⌄</span>
         </div>
         <div class="s3-faq-collapsible">
-          <div class="s3-faq-a"><strong>Near-real-time handling.</strong> HubSpot Active Lists re-evaluate continuously — if a contact's country moves to a blocked jurisdiction (CN/HK/GB/AU/NZ), they're removed from the list within minutes and the workflow unenrolls them. Already-sent emails can't be unsent, but no future sends will fire.</div>
+          <div class="s3-faq-a"><strong>Near-real-time handling.</strong> HubSpot Active Lists re-evaluate continuously — if a contact's country moves to a blocked jurisdiction (any of the 13 excluded countries), they're removed from the list within minutes and the workflow unenrolls them. Already-sent emails can't be unsent, but no future sends will fire.</div>
         </div>
       </div>
 
@@ -4728,28 +4739,28 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
             <tr>
               <td><span class="s4-field-name">ta_first_deposit_time</span></td>
               <td><span class="s4-field-type-pill">Datetime</span></td>
-              <td><div class="s4-field-purpose">Filter 2 — FTD not null · Filter 3 — 7-day buffer</div></td>
+              <td><div class="s4-field-purpose">Filter 2 — FTD completed (not null)</div></td>
               <td><span class="s4-status-confirmed">Confirmed</span></td>
               <td><div class="s4-field-notes">Confirmed by Nick. ISO datetime format (e.g. <code>2026-04-15 09:32:11</code>).</div></td>
             </tr>
             <tr>
               <td><span class="s4-field-name">portal - user_type</span></td>
               <td><span class="s4-field-type-pill">String</span></td>
-              <td><div class="s4-field-purpose">Filter 4 — exclude existing IBs · Also <strong>continuous exit trigger</strong> throughout journey</div></td>
+              <td><div class="s4-field-purpose">Filter 3 — exclude existing IBs · Also <strong>continuous exit trigger</strong> throughout journey</div></td>
               <td><span class="s4-status-confirmed">Confirmed</span></td>
               <td><div class="s4-field-notes">Confirmed by Sichen &amp; Nick (19 May 2026) — the existing <code>portal - user_type</code> field is used, so no new IB-flag field was needed. Values <code>"IB"</code> or <code>"IB + Client"</code> identify a contact as an IB. Synced via the standard 4-hour CRM pipeline.</div></td>
             </tr>
             <tr>
               <td><span class="s4-field-name">source_marketing_campaign</span></td>
               <td><span class="s4-field-type-pill">String</span></td>
-              <td><div class="s4-field-purpose">Filters 5, 6, 7 — IB-referred / Sales-acquired / Partnership exclusions</div></td>
+              <td><div class="s4-field-purpose">Filters 4, 5, 6, 7 — IB-referred / Sales-acquired / Partnership / Affiliate exclusions</div></td>
               <td><span class="s4-status-confirmed">Confirmed</span></td>
               <td><div class="s4-field-notes">Confirmed. Values include <code>NULL</code> (organic), <code>"IB-*"</code>, <code>"Sales-*"</code>, <code>"*Partnership*"</code>, <code>"Refer Friend"</code>, <code>"MKT-*"</code>.</div></td>
             </tr>
             <tr>
               <td><span class="s4-field-name">portal - country</span></td>
               <td><span class="s4-field-type-pill">String</span></td>
-              <td><div class="s4-field-purpose">Filter 8 — regulatory exclusions (China/Hong Kong/UK/Australia/New Zealand)</div></td>
+              <td><div class="s4-field-purpose">Filter 8 — regulatory exclusions (China/Hong Kong/UK/Australia/New Zealand/Singapore/Spain/Canada/Japan/Romania/France/Taiwan/Macau)</div></td>
               <td><span class="s4-status-confirmed">Confirmed</span></td>
               <td><div class="s4-field-notes">Confirmed by Nick. <strong>Full country names</strong> (not ISO-2 codes) — e.g. <code>"China"</code>, <code>"Hong Kong"</code>, <code>"United Kingdom"</code>. Synced from CRM every 4 hours.</div></td>
             </tr>
@@ -4806,7 +4817,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
             <div class="s4-action-num">6</div>
             <div class="s4-action-title">Re-opened Accounts</div>
           </div>
-          <div class="s4-action-body">✅ <strong>Confirmed:</strong> <code>ta_first_deposit_time</code> doesn't change when a client closes and re-opens — the 7-day buffer (Filter 3) stays anchored to the original FTD.</div>
+          <div class="s4-action-body">✅ <strong>Confirmed:</strong> <code>ta_first_deposit_time</code> doesn't change when a client closes and re-opens — so the FTD-completed check (Filter 2) stays satisfied. The 7-day delay runs from workflow entry, not the FTD date.</div>
         </div>
       </div>
 
@@ -4847,7 +4858,7 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
 
       <div class="filter-note" style="margin-bottom:18px;">
         <div class="filter-section-label">First Activation (Launch Behaviour)</div>
-        <div class="filter-note-text">When the workflow is first switched on, it enrolls existing eligible clients as well as new ones — not only clients who FTD going forward. To keep the day-one send volume manageable, the initial backfill is <strong>capped to clients who completed their FTD within the last 12 months</strong>. After launch, the workflow runs continuously, enrolling each client once they clear the 7-day buffer.</div>
+        <div class="filter-note-text">When the workflow is first switched on, it enrolls existing eligible clients as well as new ones — not only clients who FTD going forward. To keep the day-one send volume manageable, the initial backfill is <strong>capped to clients who completed their FTD within the last 12 months</strong>. After launch, the workflow runs continuously — each eligible client enrols, waits through the 7-day delay, then receives Email 1.</div>
       </div>
 
       <!-- HubSpot Activities Used -->
@@ -4867,7 +4878,13 @@ body { font-family:var(--font); color:var(--dark); background:var(--bg); line-he
               <td><span class="s4-field-name">Entry Source</span></td>
               <td><span class="s4-field-type-pill">HubSpot Contacts list</span></td>
               <td>1</td>
-              <td><div class="s4-field-notes">Source: filtered Entry list — output of the Workflow enrollment filter from Section 4. First send (E1) fires immediately on entry.</div></td>
+              <td><div class="s4-field-notes">Source: filtered Entry list — output of the Workflow enrollment filter from Section 4. A 7-day delay runs first; E1 sends after it.</div></td>
+            </tr>
+            <tr>
+              <td><span class="s4-field-name">7-Day Delay</span></td>
+              <td><span class="s4-field-type-pill">Delay (duration)</span></td>
+              <td>1</td>
+              <td><div class="s4-field-notes">7 days — the workflow's first step, placed before Email 1. Gives the contact time to settle in and trade before the IB pitch.</div></td>
             </tr>
             <tr>
               <td><span class="s4-field-name">Email Send</span></td>
@@ -5092,7 +5109,7 @@ Hi {% <span class="ampscript-keyword">if</span> <span class="ampscript-var">cont
         </div>
 
         <div class="s6-goal-body">
-          When a contact's <code>portal - user_type</code> property becomes <code>"IB"</code> or <code>"IB + Client"</code>, HubSpot recognizes this as the workflow's <strong>goal conversion</strong>, automatically unenrolls the contact, and counts it toward the workflow's performance metrics. The contact is then picked up by the Newly IB welcome journey (<code>MKTOP-7576</code>) via its own enrollment trigger.
+          When a contact's <code>portal - user_type</code> property becomes <code>"IB"</code> or <code>"IB + Client"</code>, HubSpot recognizes this as the workflow's <strong>goal conversion</strong>, automatically unenrolls the contact, and counts it toward the workflow's performance metrics. The contact is then picked up by the Newly IB welcome journey (<code>MKTOP-7576</code>) via its own enrollment trigger. <em>Note: the Newly IB onboarding journey is currently on the legacy platform — its HubSpot revamp is slated for Q4 2026 / Q1 2027.</em>
         </div>
 
         <dl class="s6-goal-grid">
@@ -5377,8 +5394,8 @@ Hi {% <span class="ampscript-keyword">if</span> <span class="ampscript-var">cont
         </div>
       </div>
 
-      <!-- Re-Entry Cadence Example (1-year view) -->
-      <div class="s3-sub-title"><span class="s3-sub-icon">📊</span>Re-Entry Cadence — 1-Year View for a Non-Converter</div>
+      <!-- Re-Entry Cadence Example (3-round cap) -->
+      <div class="s3-sub-title"><span class="s3-sub-icon">📊</span>Re-Entry Cadence — Capped at 3 Rounds</div>
 
       <div class="s7-cadence-wrapper">
         <table class="s7-cadence-table">
@@ -5391,17 +5408,14 @@ Hi {% <span class="ampscript-keyword">if</span> <span class="ampscript-var">cont
             </tr>
           </thead>
           <tbody>
-            <tr><td><span class="cycle-num">1</span></td><td><span class="cycle-range">Day 0 – 37</span></td><td>E1, E2, E3, E4, E5</td><td>First enrollment after FTD + 7-day buffer</td></tr>
+            <tr><td><span class="cycle-num">1</span></td><td><span class="cycle-range">Day 0 – 37</span></td><td>E1, E2, E3, E4, E5</td><td>First enrolment → 7-day delay → E1</td></tr>
             <tr><td><span class="cycle-num">2</span></td><td><span class="cycle-range">Day 38 – 75</span></td><td>E1, E2, E3, E4, E5</td><td>Re-enrolls if still non-IB &amp; still on Active List</td></tr>
-            <tr><td><span class="cycle-num">3</span></td><td><span class="cycle-range">Day 76 – 113</span></td><td>E1, E2, E3, E4, E5</td><td>Same pattern continues</td></tr>
-            <tr><td><span class="cycle-num">4</span></td><td><span class="cycle-range">Day 114 – 151</span></td><td>E1, E2, E3, E4, E5</td><td>~4th cycle within first 6 months</td></tr>
-            <tr><td><span class="cycle-num">5</span></td><td><span class="cycle-range">Day 152 – 189</span></td><td>E1, E2, E3, E4, E5</td><td>~mid-year</td></tr>
-            <tr><td><span class="cycle-num">6–9</span></td><td><span class="cycle-range">Day 190 – 341</span></td><td>E1–E5 × 4 cycles</td><td>Pattern repeats every ~37 days</td></tr>
-            <tr><td><span class="cycle-num">10</span></td><td><span class="cycle-range">Day 342 – 379</span></td><td>E1, E2, E3, E4, E5</td><td>~10th cycle by end of year</td></tr>
+            <tr><td><span class="cycle-num">3</span></td><td><span class="cycle-range">Day 76 – 113</span></td><td>E1, E2, E3, E4, E5</td><td>Final round — 3rd and last re-enrollment before the cap</td></tr>
+            <tr><td><span class="cycle-num">✕</span></td><td><span class="cycle-range">Day 113+</span></td><td>—</td><td><strong>Frequency cap reached.</strong> After 3 rounds the contact stops re-enrolling — no further sends from this campaign.</td></tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4">⚠️ Without a frequency cap, a non-converter could receive <strong>~50 emails/year</strong> from this campaign alone (10 cycles × 5 emails). Decide with Marketing whether to cap at e.g. 4–6 cycles/year.</td>
+              <td colspan="4">✅ <strong>Frequency cap: max 3 re-enrollment rounds.</strong> A non-converter receives at most ~15 emails (3 cycles × 5) over roughly 4 months, then stops re-enrolling — this prevents the indefinite ~50-emails/year loop.</td>
             </tr>
           </tfoot>
         </table>
@@ -5426,7 +5440,7 @@ Hi {% <span class="ampscript-keyword">if</span> <span class="ampscript-var">cont
           <span class="s3-faq-toggle">⌄</span>
         </div>
         <div class="s3-faq-collapsible">
-          <div class="s3-faq-a">Depends on Nick's pipeline behavior — <strong>confirmed by Nick:</strong> <code>ta_first_deposit_time</code> <em>doesn't change</em> when a client closes and re-opens. So Filter 3's 7-day buffer stays anchored to the original FTD. A returning client doesn't get a fresh 7-day wait — they re-enter on the next cycle after the 30-day cool-down (assuming they still match all 8 filters and aren't already an IB).</div>
+          <div class="s3-faq-a">Depends on Nick's pipeline behavior — <strong>confirmed by Nick:</strong> <code>ta_first_deposit_time</code> <em>doesn't change</em> when a client closes and re-opens, so the FTD-completed check (Filter 2) stays satisfied. On re-enrollment, the workflow's 7-day delay runs again before Email 1 (assuming they still match all 8 filters and aren't already an IB).</div>
         </div>
       </div>
 
@@ -5475,9 +5489,9 @@ Hi {% <span class="ampscript-keyword">if</span> <span class="ampscript-var">cont
         <div class="s4-action-card">
           <div class="s4-action-card-header">
             <div class="s4-action-num">2</div>
-            <div class="s4-action-title">Frequency Cap Decision</div>
+            <div class="s4-action-title">Frequency Cap — Confirmed</div>
           </div>
-          <div class="s4-action-body"><strong>Marketing / Lucas:</strong> decide if there should be an annual or lifetime cap on re-entries (e.g. max 4–6 cycles/year). Without a cap, a non-converter could receive ~50 emails/year from this campaign.</div>
+          <div class="s4-action-body">✅ <strong>Confirmed:</strong> cap re-enrollment at <strong>3 rounds</strong> (~15 emails max per contact). After the 3rd cycle, the contact is suppressed from re-entry. <strong>Sichen to implement</strong> — typical approach is a cycle-counter property (incremented each round) checked in the Active List criteria so the contact drops out after 3 rounds. Confirm the exact HubSpot mechanism during build.</div>
         </div>
 
         <div class="s4-action-card">
